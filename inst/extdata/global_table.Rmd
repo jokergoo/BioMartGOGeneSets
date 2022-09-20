@@ -1,0 +1,103 @@
+---
+title: "BioMart Gene Ontology Gene Sets Collections"
+author: "Zuguang Gu ( z.gu@dkfz.de )"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r, echo = FALSE, message = FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+    error = FALSE,
+    tidy  = FALSE,
+    message = FALSE,
+    echo = FALSE)
+library(GetoptLong)
+library(rGREAT)
+```
+
+First load the **BioMartGOGeneSets** package.
+
+```{r, echo = TRUE}
+library(BioMartGOGeneSets)
+```
+
+Get genes for a specific organism. The proper value of `dataset` can be found in the tables at the end of this document.
+
+```{r, eval = FALSE, echo = TRUE}
+getBioMartGenes(dataset)
+```
+
+Get GO gene sets for a specific organism.
+
+
+```{r, eval = FALSE, echo = TRUE}
+getBioMartGOGeneSets(dataset, ontology = "BP")
+```
+
+
+```{r}
+table = readRDS("all_supported_organisms.rds")
+table$genesets = paste0("BP (", table$n_bp_genesets, "), CC (", table$n_cc_genesets, "), MF (", table$n_mf_genesets, ")")
+colnames(table)[colnames(table) == "n_gene"] = "genes"
+df_genes = table[table$mart == "genes_mart", c(1:3, 5, 9), drop = FALSE]
+df_plants = table[table$mart == "plants_mart", c(1:3, 5, 9), drop = FALSE]
+df_metazoa = table[table$mart == "metazoa_mart", c(1:3, 5, 9), drop = FALSE]
+df_fungi = table[table$mart == "fungi_mart", c(1:3, 5, 9), drop = FALSE]
+df_protists = table[table$mart == "protists_mart", c(1:3, 5, 9), drop = FALSE]
+```
+
+Version information:
+
+```{r, echo = TRUE}
+BioMartGOGeneSets
+```
+
+Source code for retrieving GO gene sets can be obtained here:
+
+```{r, echo = TRUE}
+system.file("scripts", "biomart_genesets.R", package = "BioMartGOGeneSets")
+```
+
+
+<hr>
+
+# {.tabset}
+
+## Ensembl organisms (`r nrow(df_genes)` organisms)
+
+```{r}
+kable(df_genes, row.names = FALSE)
+```
+
+## Plants (`r nrow(df_plants)` organisms)
+
+```{r}
+kable(df_plants, row.names = FALSE)
+```
+
+## Metazoa (`r nrow(df_metazoa)` organisms)
+
+```{r}
+kable(df_metazoa, row.names = FALSE)
+```
+
+## Fungi (`r nrow(df_fungi)` organisms)
+
+```{r}
+kable(df_fungi, row.names = FALSE)
+```
+
+## Protists (`r nrow(df_protists)` organisms)
+
+```{r}
+kable(df_protists, row.names = FALSE)
+```

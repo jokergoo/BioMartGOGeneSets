@@ -1,0 +1,9 @@
+S3method("print", "BioMartGOGeneSets_info")
+export("print.BioMartGOGeneSets_info")
+export("BioMartGOGeneSets")
+export("getBioMartGOGeneSets")
+export("getBioMartGenes")
+export("supportedOrganisms")
+
+importFrom("utils", "browseURL", "download.file")
+importFrom("S4Vectors", "mcols")

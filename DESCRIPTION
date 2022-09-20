@@ -1,0 +1,19 @@
+Package: BioMartGOGeneSets
+Type: Package
+Title: Gene Ontology Gene Sets from BioMart
+Version: 0.99.0
+Date: 2022-09-20
+Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
+                  comment = c('ORCID'="0000-0002-7395-8709"))
+Depends: R (>= 4.2.0)
+Imports: utils, S4Vectors
+Suggests: biomaRt, GO.db, GenomicRanges, knitr
+biocViews: AnnotationData, Organism
+Description: It contains pre-compiled Gene Ontology gene sets for all organisms
+    available on the Ensembl database. It also includes GO gene sets for organisms 
+    on Ensembl Plants, Ensembl Metazoa, Ensembl Fungi and Ensembl Protists. 
+    The data was collected with the biomaRt package.
+VignetteBuilder: knitr
+URL: https://github.com/jokergoo/BioMartGOGeneSets
+License: MIT + file LICENSE
+NeedsCompilation: no

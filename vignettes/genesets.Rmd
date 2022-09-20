@@ -1,0 +1,118 @@
+---
+title: "Pre-compiled GO Gene Sets"
+author: "Zuguang Gu (z.gu@dkfz.de)"
+date: '`r Sys.Date()`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Pre-compiled GO Gene Sets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, eval = TRUE, echo = FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+    error = FALSE,
+    tidy  = FALSE,
+    message = FALSE
+)
+```
+
+The **BioMartGOGeneSets** contains pre-compiled GO gene sets for a huge number of
+organisms supported in [BioMart](https://www.ensembl.org/info/data/biomart/index.html).
+There are two types of data: 1. genes and 2 gene sets.
+
+## Retrieve genes
+
+To obtain the genes, use the function `getBioMartGenes()`. You need to provide
+a proper "dataset", which can be found with the function `supportedOrganisms()`. Here
+we use the dataset `"hsapiens_gene_ensembl"` which is for human.
+
+```{r}
+library(BioMartGOGeneSets)
+gr = getBioMartGenes("hsapiens_gene_ensembl")
+gr
+```
+
+The returned value is a `GRanges` object which contains the coordinates of genes. 
+The meta columns contain additional information of genes such as different gene IDs
+and type of genes.
+
+You can also provide a "short name" for dataset and the function will perform a partial matching.
+
+```{r, eval = FALSE}
+gr = getBioMartGenes("hsapiens")
+```
+
+You can try the following command and see what will be printed:
+
+```{r, eval = FALSE}
+gr = getBioMartGenes("human")
+```
+
+## Retrieve gene sets
+
+To obtain the gene sets, use the function `getBioMartGOGeneSets()`. Also you need to provide
+the "dataset". Here we use a different dataset: `"mmusculus_gene_ensembl"` (mouse).
+
+```{r}
+lt = getBioMartGOGeneSets("mmusculus_gene_ensembl")
+length(lt)
+lt[1]
+```
+
+The variable `lt` is a list of vectors where each vector corresponds to a GO gene set with Ensembl
+IDs as gene identifiers.
+
+You can try the following command and see what will be printed:
+
+```{r, eval = FALSE}
+lt = getBioMartGOGeneSets("mouse")
+```
+
+In `getBioMartGOGeneSets()`, argument `as_table` can be set to `TRUE`, then the function returns
+a data frame.
+
+```{r}
+tb = getBioMartGOGeneSets("mmusculus_gene_ensembl", as_table = TRUE)
+head(tb)
+```
+
+Argument `ontology` controls which category of GO gene sets. Possible values should be `"BP"`, `"CC"`
+and `"MF"`.
+
+```{r, eval = FALSE}
+getBioMartGOGeneSets("mmusculus_gene_ensembl", ontology = "BP") # the default one
+getBioMartGOGeneSets("mmusculus_gene_ensembl", ontology = "CC")
+getBioMartGOGeneSets("mmusculus_gene_ensembl", ontology = "MF")
+```
+
+Last, argument `gene_id_type` can be set to `"entrez_gene"` or `"gene_symbol"`, then genes in the gene sets
+are in Entrez IDs or gene symbols. Note this depends on specific organisms, that not every organism supports 
+Entrez IDs or gene symbols.
+
+```{r}
+lt = getBioMartGOGeneSets("mmusculus_gene_ensembl", gene_id_type = "entrez_gene")
+lt[1]
+```
+
+## Version of the data
+
+The object `BioMartGOGeneSets` contains the version and source of data.
+
+```{r}
+BioMartGOGeneSets
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+
+
