@@ -1,5 +1,7 @@
 # Gene Ontology Gene Sets from BioMart
 
+[![R-CMD-check](https://github.com/jokergoo/BioMartGOGeneSets/workflows/R-CMD-check/badge.svg)](https://github.com/jokergoo/BioMartGOGeneSets/actions)
+
 The **BioMartGOGeneSets** contains pre-compiled GO gene sets for a huge number of
 organisms supported in [BioMart](https://www.ensembl.org/info/data/biomart/index.html).
 There are two types of data: 1. genes and 2 gene sets.
