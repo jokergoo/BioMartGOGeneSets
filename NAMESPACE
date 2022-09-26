@@ -5,5 +5,6 @@ export("getBioMartGOGeneSets")
 export("getBioMartGenes")
 export("supportedOrganisms")
 
-importFrom("utils", "browseURL", "download.file")
 importFrom("S4Vectors", "mcols")
+importFrom("utils", "browseURL", "download.file")
+

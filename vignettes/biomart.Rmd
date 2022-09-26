@@ -28,7 +28,7 @@ system.file("scripts", "biomart_genesets.R", package = "BioMartGOGeneSets")
 
 Retrieving GO gene sets from BioMart is a two-step process.
 
-### Step1. Retrieve the relations between GO terms and genes for a specific organism.
+### Step1. Retrieve the relations between GO terms and genes for a specific organism
 
 The relations can be obtained from BioMart with the R package **biomaRt**.
 First let's create a "Mart" object which is like a connection to the BioMart web-service. 
