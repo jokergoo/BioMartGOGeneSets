@@ -62,8 +62,8 @@ print.BioMartGOGeneSets_info = function(x, ...) {
 # lt = getBioMartGOGeneSets("hsapiens_gene_ensembl")
 # lt = getBioMartGOGeneSets("hsapiens_gene_ensembl", gene_id_type = "entrez")
 # tb = getBioMartGOGeneSets("hsapiens_gene_ensembl", as_table = TRUE)
-getBioMartGOGeneSets = function(dataset, ontology = "BP", as_table = FALSE, 
-	gene_id_type = "ensembl_gene") {
+getBioMartGOGeneSets = function(dataset, ontology = "BP", 
+	as_table = FALSE, gene_id_type = "ensembl_gene") {
 
 	dataset = validate_dataset(dataset)
 

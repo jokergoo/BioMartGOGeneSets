@@ -7,8 +7,8 @@ Get GO gene sets
 Get GO gene sets
 }
 \usage{
-getBioMartGOGeneSets(dataset, ontology = "BP", as_table = FALSE,
-    gene_id_type = "ensembl_gene")
+getBioMartGOGeneSets(dataset, ontology = "BP",
+    as_table = FALSE, gene_id_type = "ensembl_gene")
 }
 \arguments{
 
