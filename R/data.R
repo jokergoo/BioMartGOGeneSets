@@ -120,6 +120,13 @@ getBioMartGOGeneSets = function(dataset, ontology = "BP",
 # -dataset A BioMart dataset. For a proper value, please see `supportedOrganisms`.
 # -add_chr_prefix Whether to add "chr" prefix to chromosome names? If it is ture, it uses ``GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"`` to add the prefix.
 #
+# == details
+# Note ``add_chr_prefix`` is just a helper argument. You can basically do the same as:
+#
+#     gr = getBioMartGenes("hsapiens_gene_ensembl")
+#     seqlevelsStyle(gr) = "UCSC"
+#
+#
 # == value
 # A `GenomicRanges::GRanges` object.
 #

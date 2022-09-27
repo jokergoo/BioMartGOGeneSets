@@ -60,6 +60,14 @@ gr = getBioMartGenes("hsapiens_gene_ensembl", add_chr_prefix = TRUE)
 gr
 ```
 
+Note `add_chr_prefix` is just a helper argument. You can basically do the same as:
+
+```{r}
+gr = getBioMartGenes("hsapiens_gene_ensembl")
+seqlevelsStyle(gr) = "UCSC"
+gr
+```
+
 ## Retrieve gene sets
 
 To obtain the gene sets, use the function `getBioMartGOGeneSets()`. Also you need to provide

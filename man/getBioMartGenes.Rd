@@ -15,6 +15,13 @@ getBioMartGenes(dataset, add_chr_prefix = FALSE)
   \item{add_chr_prefix}{Whether to add "chr" prefix to chromosome names? If it is ture, it uses \code{GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"} to add the prefix.}
 
 }
+\details{
+Note \code{add_chr_prefix} is just a helper argument. You can basically do the same as:
+
+  \preformatted{
+    gr = getBioMartGenes("hsapiens_gene_ensembl")
+    seqlevelsStyle(gr) = "UCSC"  }
+}
 \value{
 A \code{\link[GenomicRanges:GRanges-class]{GRanges}} object.
 }
