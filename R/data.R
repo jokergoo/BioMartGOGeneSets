@@ -118,6 +118,7 @@ getBioMartGOGeneSets = function(dataset, ontology = "BP",
 #
 # == param
 # -dataset A BioMart dataset. For a proper value, please see `supportedOrganisms`.
+# -add_chr_prefix Whether to add "chr" prefix to chromosome names? If it is ture, it uses ``GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"`` to add the prefix.
 #
 # == value
 # A `GenomicRanges::GRanges` object.
@@ -125,12 +126,20 @@ getBioMartGOGeneSets = function(dataset, ontology = "BP",
 # == example
 # gr = getBioMartGenes("hsapiens_gene_ensembl")
 # gr
-getBioMartGenes = function(dataset) {
+# gr = getBioMartGenes("hsapiens_gene_ensembl", add_chr_prefix = TRUE)
+# gr
+getBioMartGenes = function(dataset, add_chr_prefix = FALSE) {
 
 	dataset = validate_dataset(dataset)
 	url = paste0("https://jokergoo.github.io/BioMartGOGeneSets_data/genes/granges_", dataset, "_genes.rds")
 
-	get_data(url)
+	gr = get_data(url)
+
+	if(add_chr_prefix) {
+		GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"
+	}
+
+	gr
 }
 
 validate_dataset = function(dataset) {

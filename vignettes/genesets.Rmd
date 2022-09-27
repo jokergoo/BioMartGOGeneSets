@@ -52,6 +52,14 @@ You can try the following command and see what will be printed:
 gr = getBioMartGenes("human")
 ```
 
+Chromosome names from Ensembl have no "chr" prefix. You can set `add_chr_prefix = TURE` to add `"chr"` prefix to some
+of the chromosome names. Internally it uses `GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"` to check and to add `"chr"` prefix.
+
+```{r}
+gr = getBioMartGenes("hsapiens_gene_ensembl", add_chr_prefix = TRUE)
+gr
+```
+
 ## Retrieve gene sets
 
 To obtain the gene sets, use the function `getBioMartGOGeneSets()`. Also you need to provide

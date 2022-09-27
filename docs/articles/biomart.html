@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BioMartGOGeneSets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <h1 data-toc-skip>Retrieve GO Gene Sets from BioMart</h1>
                         <h4 data-toc-skip class="author">Zuguang Gu (<a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a>)</h4>
             
-            <h4 data-toc-skip class="date">2022-09-20</h4>
+            <h4 data-toc-skip class="date">2022-09-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/BioMartGOGeneSets/blob/HEAD/vignettes/biomart.Rmd" class="external-link"><code>vignettes/biomart.Rmd</code></a></small>
       <div class="hidden name"><code>biomart.Rmd</code></div>
@@ -93,10 +93,10 @@
 <p>This vignette demonstrates how to manually collect GO gene sets from <a href="https://www.ensembl.org/info/data/biomart/index.html" class="external-link">BioMart</a>. The source code for retrieving GO gene sets for all supported organisms on BioMart can be found from the following location:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"scripts"</span>, <span class="st">"biomart_genesets.R"</span>, package <span class="op">=</span> <span class="st">"BioMartGOGeneSets"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "/private/var/folders/g3/f2y6rp510nxf3t5sj6h902bc0000gr/T/RtmpyBzXI2/temp_libpathe0a36a57a65a/BioMartGOGeneSets/scripts/biomart_genesets.R"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "/private/var/folders/g3/f2y6rp510nxf3t5sj6h902bc0000gr/T/RtmpkmWsIf/temp_libpath757a7822229e/BioMartGOGeneSets/scripts/biomart_genesets.R"</span></span></code></pre>
 <p>Retrieving GO gene sets from BioMart is a two-step process.</p>
 <div class="section level3">
-<h3 id="step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism-">Step1. Retrieve the relations between GO terms and genes for a specific organism.<a class="anchor" aria-label="anchor" href="#step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism-"></a>
+<h3 id="step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism">Step1. Retrieve the relations between GO terms and genes for a specific organism<a class="anchor" aria-label="anchor" href="#step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism"></a>
 </h3>
 <p>The relations can be obtained from BioMart with the R package <strong>biomaRt</strong>. First let’s create a “Mart” object which is like a connection to the BioMart web-service. Because this is a gene-related relation, we set argument <code>biomart</code> to <code>"genes"</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">

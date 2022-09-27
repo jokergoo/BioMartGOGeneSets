@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BioMartGOGeneSets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <h1 data-toc-skip>Pre-compiled GO Gene Sets</h1>
                         <h4 data-toc-skip class="author">Zuguang Gu (<a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a>)</h4>
             
-            <h4 data-toc-skip class="date">2022-09-20</h4>
+            <h4 data-toc-skip class="date">2022-09-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/BioMartGOGeneSets/blob/HEAD/vignettes/genesets.Rmd" class="external-link"><code>vignettes/genesets.Rmd</code></a></small>
       <div class="hidden name"><code>genesets.Rmd</code></div>
@@ -135,16 +135,49 @@
 <p>You can try the following command and see what will be printed:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gr</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGenes.html">getBioMartGenes</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span></code></pre></div>
+<p>Chromosome names from Ensembl have no “chr” prefix. You can set <code>add_chr_prefix = TURE</code> to add <code>"chr"</code> prefix to some of the chromosome names. Internally it uses <code>GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"</code> to check and to add <code>"chr"</code> prefix.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gr</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGenes.html">getBioMartGenes</a></span><span class="op">(</span><span class="st">"hsapiens_gene_ensembl"</span>, add_chr_prefix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">gr</span></span></code></pre></div>
+<pre><code><span><span class="co">## GRanges object with 68324 ranges and 4 metadata columns:</span></span>
+<span><span class="co">##                   seqnames              ranges strand | ensembl_gene_id</span></span>
+<span><span class="co">##                      &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |     &lt;character&gt;</span></span>
+<span><span class="co">##   ENSG00000000003     chrX 100627108-100639991      - | ENSG00000000003</span></span>
+<span><span class="co">##   ENSG00000000005     chrX 100584936-100599885      + | ENSG00000000005</span></span>
+<span><span class="co">##   ENSG00000000419    chr20   50934867-50959140      - | ENSG00000000419</span></span>
+<span><span class="co">##   ENSG00000000457     chr1 169849631-169894267      - | ENSG00000000457</span></span>
+<span><span class="co">##   ENSG00000000460     chr1 169662007-169854080      + | ENSG00000000460</span></span>
+<span><span class="co">##               ...      ...                 ...    ... .             ...</span></span>
+<span><span class="co">##   ENSG00000290162     chrX 119807433-119807581      - | ENSG00000290162</span></span>
+<span><span class="co">##   ENSG00000290163     chrX 119815164-119815307      - | ENSG00000290163</span></span>
+<span><span class="co">##   ENSG00000290164     chrX 119822906-119823043      - | ENSG00000290164</span></span>
+<span><span class="co">##   ENSG00000290165     chrX 119831616-119831759      - | ENSG00000290165</span></span>
+<span><span class="co">##   ENSG00000290166    chr19     1163451-1165333      + | ENSG00000290166</span></span>
+<span><span class="co">##                             gene_biotype   entrezgene_id external_gene_name</span></span>
+<span><span class="co">##                              &lt;character&gt; &lt;CharacterList&gt;        &lt;character&gt;</span></span>
+<span><span class="co">##   ENSG00000000003         protein_coding            7105             TSPAN6</span></span>
+<span><span class="co">##   ENSG00000000005         protein_coding           64102               TNMD</span></span>
+<span><span class="co">##   ENSG00000000419         protein_coding            8813               DPM1</span></span>
+<span><span class="co">##   ENSG00000000457         protein_coding           57147              SCYL3</span></span>
+<span><span class="co">##   ENSG00000000460         protein_coding           55732           C1orf112</span></span>
+<span><span class="co">##               ...                    ...             ...                ...</span></span>
+<span><span class="co">##   ENSG00000290162 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">##   ENSG00000290163 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">##   ENSG00000290164 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">##   ENSG00000290165 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">##   ENSG00000290166                 lncRNA            &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">##   -------</span></span>
+<span><span class="co">##   seqinfo: 445 sequences from an unspecified genome; no seqlengths</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="retrieve-gene-sets">Retrieve gene sets<a class="anchor" aria-label="anchor" href="#retrieve-gene-sets"></a>
 </h2>
 <p>To obtain the gene sets, use the function <code><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets()</a></code>. Also you need to provide the “dataset”. Here we use a different dataset: <code>"mmusculus_gene_ensembl"</code> (mouse).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lt</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">lt</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 16064</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## $`GO:0000002`</span></span>
 <span><span class="co">##  [1] "ENSMUSG00000019699" "ENSMUSG00000022615" "ENSMUSG00000028982"</span></span>
@@ -161,10 +194,10 @@
 <span><span class="co">## [34] "ENSMUSG00000036923" "ENSMUSG00000032633" "ENSMUSG00000029167"</span></span></code></pre>
 <p>The variable <code>lt</code> is a list of vectors where each vector corresponds to a GO gene set with Ensembl IDs as gene identifiers.</p>
 <p>You can try the following command and see what will be printed:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lt</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mouse"</span><span class="op">)</span></span></code></pre></div>
 <p>In <code><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets()</a></code>, argument <code>as_table</code> can be set to <code>TRUE</code>, then the function returns a data frame.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tb</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span>, as_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   go_geneset       ensembl_gene</span></span>
@@ -175,12 +208,12 @@
 <span><span class="co">## 5 GO:0000002 ENSMUSG00000022889</span></span>
 <span><span class="co">## 6 GO:0000002 ENSMUSG00000030557</span></span></code></pre>
 <p>Argument <code>ontology</code> controls which category of GO gene sets. Possible values should be <code>"BP"</code>, <code>"CC"</code> and <code>"MF"</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span>, ontology <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span> <span class="co"># the default one</span></span>
 <span><span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span>, ontology <span class="op">=</span> <span class="st">"CC"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span>, ontology <span class="op">=</span> <span class="st">"MF"</span><span class="op">)</span></span></code></pre></div>
 <p>Last, argument <code>gene_id_type</code> can be set to <code>"entrez_gene"</code> or <code>"gene_symbol"</code>, then genes in the gene sets are in Entrez IDs or gene symbols. Note this depends on specific organisms, that not every organism supports Entrez IDs or gene symbols.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lt</span> <span class="op">=</span> <span class="fu"><a href="../reference/getBioMartGOGeneSets.html">getBioMartGOGeneSets</a></span><span class="op">(</span><span class="st">"mmusculus_gene_ensembl"</span>, gene_id_type <span class="op">=</span> <span class="st">"entrez_gene"</span><span class="op">)</span></span>
 <span><span class="va">lt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## $`GO:0000002`</span></span>
@@ -194,7 +227,7 @@
 <h2 id="version-of-the-data">Version of the data<a class="anchor" aria-label="anchor" href="#version-of-the-data"></a>
 </h2>
 <p>The object <code>BioMartGOGeneSets</code> contains the version and source of data.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">BioMartGOGeneSets</span></span></code></pre></div>
 <pre><code><span><span class="co">## BioMart GO gene sets</span></span>
 <span><span class="co">##   Source: https://www.ensembl.org/info/data/biomart/index.html </span></span>
@@ -205,7 +238,7 @@
 <div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.2.0 (2022-04-22)</span></span>
 <span><span class="co">## Platform: x86_64-apple-darwin17.0 (64-bit)</span></span>
@@ -224,7 +257,7 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">## [1] GenomicRanges_1.48.0     GenomeInfoDb_1.32.2      IRanges_2.30.0          </span></span>
-<span><span class="co">## [4] S4Vectors_0.34.0         BiocGenerics_0.42.0      BioMartGOGeneSets_0.99.0</span></span>
+<span><span class="co">## [4] S4Vectors_0.34.0         BiocGenerics_0.42.0      BioMartGOGeneSets_0.99.2</span></span>
 <span><span class="co">## [7] knitr_1.39              </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
