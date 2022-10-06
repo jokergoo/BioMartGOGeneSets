@@ -79,9 +79,18 @@ The three attributes of GO-gene relations are `c("ensembl_gene_id", "go_id", "na
 Now we can use the function `getBM()` to obtain the GO-gene relation table.
 
 
-```{r}
+```{r, eval = FALSE}
 at = c("ensembl_gene_id", "go_id", "namespace_1003")
 go = getBM(attributes = at, mart = ensembl)
+```
+
+Check the first several rows in `go`:
+
+```{r, echo = FALSE}
+go = readRDS(system.file("extdata", "ensembl_5.rds", package = "BioMartGOGeneSets"))
+```
+
+```{r}
 head(go)
 ```
 

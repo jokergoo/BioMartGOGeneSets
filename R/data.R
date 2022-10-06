@@ -32,7 +32,7 @@ class(BioMartGOGeneSets) = "BioMartGOGeneSets_info"
 # == example
 # BioMartGOGeneSets
 print.BioMartGOGeneSets_info = function(x, ...) {
-	cat("BioMart GO gene sets\n")
+	cat("BioMart Gene Ontology gene sets\n")
 	cat("  Source:", x$source, "\n")
 	cat("  Number of organisms:", nrow(ORGANISM_TABLE), "\n")
 	cat("  Marts:", paste(unique(ORGANISM_TABLE$mart), collapse = ", "), "\n")
