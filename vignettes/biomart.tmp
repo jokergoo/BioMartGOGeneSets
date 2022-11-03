@@ -11,7 +11,7 @@ system.file("scripts", "biomart_genesets.R", package = "BioMartGOGeneSets")
 ```
 
 ```
-## [1] "/Users/guz/project/development/BioMartGOGeneSets.Rcheck/BioMartGOGeneSets/scripts/biomart_genesets.R"
+## [1] "/private/var/folders/g3/f2y6rp510nxf3t5sj6h902bc0000gr/T/RtmpljiRxb/Rinst797c17ba86ea/BioMartGOGeneSets/scripts/biomart_genesets.R"
 ```
 
 

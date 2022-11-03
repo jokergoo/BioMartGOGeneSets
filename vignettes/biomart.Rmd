@@ -19,12 +19,12 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = Sys.info()["user"] == "guz", echo = FALSE}
-knit("biomart.Rmd2", output = "biomart.md2", quiet = TRUE)
-invisible(file.copy("biomart", "~/project/development/BioMartGOGeneSets/vignettes/biomart.md2", overwrite = TRUE))
+knit("biomart.Rmd2", output = "biomart", quiet = TRUE)
+invisible(file.copy("biomart.tmp", "~/project/development/BioMartGOGeneSets/vignettes/biomart.tmp", overwrite = TRUE))
 ```
 
 ```{r, echo = FALSE, results = "asis"}
-lines = readLines("biomart.md2")
+lines = readLines("biomart.tmp")
 cat(lines, sep = "\n")
 ```
 
