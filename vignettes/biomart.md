@@ -1,19 +1,17 @@
 
 
-```{r, eval = TRUE, echo = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-    error = FALSE,
-    tidy  = FALSE,
-    message = FALSE
-)
-```
+
 
 This vignette demonstrates how to manually collect GO gene sets from [BioMart](https://www.ensembl.org/info/data/biomart/index.html). The source
 code for retrieving GO gene sets for all supported organisms on BioMart can be found from the following location:
 
-```{r}
+
+```r
 system.file("scripts", "biomart_genesets.R", package = "BioMartGOGeneSets")
+```
+
+```
+## [1] "/Users/guz/project/development/BioMartGOGeneSets.Rcheck/BioMartGOGeneSets/scripts/biomart_genesets.R"
 ```
 
 
@@ -25,29 +23,60 @@ The relations can be obtained from BioMart with the R package **biomaRt**.
 First let's create a "Mart" object which is like a connection to the BioMart web-service. 
 Because this is a gene-related relation, we set argument `biomart` to `"genes"`.
 
-```{r}
+
+```r
 library(biomaRt)
 ensembl = useEnsembl(biomart = "genes")
 ensembl
 ```
 
-```{r, echo = FALSE}
-ensembl = useEnsembl(biomart = "genes", mirror = "uswest")
 ```
+## Object of class 'Mart':
+##   Using the ENSEMBL_MART_ENSEMBL BioMart database
+##   No dataset selected.
+```
+
+
 
 Please note, if later when you use **biomaRt** and see errors of "timeout", you can select a different mirror, such as:
 
-```{r, eval = FALSE}
+
+```r
 useEnsembl(biomart = "genes", mirror = "uswest")
 ```
 
 Next we need to select an organism. In BioMart, it is called a "dataset". To get a proper value of an organism dataset,
 we can use `listDatasets()` to get a list of supported datasets.
 
-```{r}
+
+```r
 datasets = listDatasets(ensembl)
 dim(datasets)
+```
+
+```
+## [1] 215   3
+```
+
+```r
 head(datasets)
+```
+
+```
+##                        dataset                           description
+## 1 abrachyrhynchus_gene_ensembl Pink-footed goose genes (ASM259213v1)
+## 2     acalliptera_gene_ensembl      Eastern happy genes (fAstCal1.2)
+## 3   acarolinensis_gene_ensembl       Green anole genes (AnoCar2.0v2)
+## 4    acchrysaetos_gene_ensembl       Golden eagle genes (bAquChr1.2)
+## 5    acitrinellus_gene_ensembl        Midas cichlid genes (Midas_v5)
+## 6    amelanoleuca_gene_ensembl       Giant panda genes (ASM200744v2)
+##       version
+## 1 ASM259213v1
+## 2  fAstCal1.2
+## 3 AnoCar2.0v2
+## 4  bAquChr1.2
+## 5    Midas_v5
+## 6 ASM200744v2
 ```
 
 You can see there are a huge number of organisms supported in BioMart. The first column in `datasets` contains valid values
@@ -60,19 +89,44 @@ In this example, we use the dataset for human `"hsapiens_gene_ensembl"`.
 
 To use the dataset, we specify `dataset` in the function `useDateset()`, which is like adding a flag of which dataset to use.
 
-```{r}
+
+```r
 ensembl = useDataset(dataset = "hsapiens_gene_ensembl", mart = ensembl)
 ensembl
+```
+
+```
+## Object of class 'Mart':
+##   Using the ENSEMBL_MART_ENSEMBL BioMart database
+##   Using the hsapiens_gene_ensembl dataset
 ```
 
 The dataset is like a giant table with a huge number of columns which provide massive additional information for genes. Here we are only 
 interested in GO-related information. In the dataset, the table columns are called "attributes". There are a huge number
 of supported attributes in a dataset. The complete list of attributes can be obtained by the function `listAttributes()`.
 
-```{r}
+
+```r
 all_at = listAttributes(mart = ensembl)
 dim(all_at)
+```
+
+```
+## [1] 3162    3
+```
+
+```r
 head(all_at)
+```
+
+```
+##                            name                  description         page
+## 1               ensembl_gene_id               Gene stable ID feature_page
+## 2       ensembl_gene_id_version       Gene stable ID version feature_page
+## 3         ensembl_transcript_id         Transcript stable ID feature_page
+## 4 ensembl_transcript_id_version Transcript stable ID version feature_page
+## 5            ensembl_peptide_id            Protein stable ID feature_page
+## 6    ensembl_peptide_id_version    Protein stable ID version feature_page
 ```
 
 To get proper values for the attributes, we need to go through the long table and sometimes this is not an easy task. 
@@ -80,19 +134,29 @@ The three attributes of GO-gene relations are `c("ensembl_gene_id", "go_id", "na
 Now we can use the function `getBM()` to obtain the GO-gene relation table.
 
 
-```{r, eval = FALSE}
+
+```r
 at = c("ensembl_gene_id", "go_id", "namespace_1003")
 go = getBM(attributes = at, mart = ensembl)
 ```
 
 Check the first several rows in `go`:
 
-```{r, echo = FALSE}
-go = readRDS(system.file("extdata", "ensembl_5.rds", package = "BioMartGOGeneSets"))
+
+
+
+```r
+head(go)
 ```
 
-```{r}
-head(go)
+```
+##   ensembl_gene_id      go_id     namespace_1003
+## 1 ENSG00000210049 GO:0030533 molecular_function
+## 2 ENSG00000210049 GO:0006412 biological_process
+## 3 ENSG00000211459 GO:0003735 molecular_function
+## 4 ENSG00000211459 GO:0005840 cellular_component
+## 5 ENSG00000210077                              
+## 6 ENSG00000210082
 ```
 
 For some organisms, the returned table might be huge, or due to the bad internet connection, the data retrieving may exceed
@@ -105,7 +169,8 @@ Error in curl::curl_fetch_memory(url, handle = handle) :
 
 In this case, you might need to split the query into blocks and make sure each job query is small.
 
-```{r, eval = FALSE}
+
+```r
 genes = getBM(attributes = "ensembl_gene_id", mart = ensembl)[, 1]
 go1 = getBM(attributes = at, mart = ensembl, filter = "ensembl_gene_id", value = genes[1:1000])
 go2 = getBM(attributes = at, mart = ensembl, filter = "ensembl_gene_id", value = genes[1001:2000])
@@ -116,7 +181,8 @@ rbind(go1, go2, ...)
 
 In this example, we will only demonstrate the Biological Process Ontology, and we convert the data frame `go` to a list of genes.
 
-```{r}
+
+```r
 go = go[go$namespace_1003 == "biological_process", , drop = FALSE]
 gs = split(go$ensembl_gene_id, go$go_id)
 ```
@@ -132,7 +198,8 @@ The hierarchical structure of GO terms is stored in the **GO.db** package. In th
 GO terms only in the Biological Process ontology. The variable `GOBPOFFSPRING` is simply a list where each element vector contains all offspring
 terms (child and remote downstream terms) of a GO term.
 
-```{r}
+
+```r
 library(GO.db)
 bp_terms = GOID(GOTERM)[Ontology(GOTERM) == "BP"]
 GOBPOFFSPRING = as.list(GOBPOFFSPRING)
@@ -140,7 +207,8 @@ GOBPOFFSPRING = as.list(GOBPOFFSPRING)
 
 Now it is quite easy to merge genes from offspring terms. Just note as the final step, empty GO gene sets should be removed.
 
-```{r}
+
+```r
 gs2 = lapply(bp_terms, function(nm) {
 	go_id = c(nm, GOBPOFFSPRING[[nm]]) # self + offspring
 	unique(unlist(gs[go_id]))
