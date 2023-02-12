@@ -22,7 +22,7 @@ devtools::install_github("jokergoo/BioMartGOGeneSets")
 
 To obtain the genes, use the function `getBioMartGenes()`. You need to provide
 a proper "dataset", which can be found with the function `supportedOrganisms()` (A complete list can
-be also found from https://htmlpreview.github.io/?https://github.com/jokergoo/BioMartGOGeneSets/blob/master/inst/extdata/global_table.html). Here
+be also found from https://jokergoo.github.io/BioMartGOGeneSets/articles/supported_organisms.html). Here
 we use the dataset `"hsapiens_gene_ensembl"` which is for human.
 
 ```r
