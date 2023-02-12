@@ -1,8 +1,9 @@
 pandoc: 2.11.4
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   biomart: biomart.html
   genesets: genesets.html
-last_built: 2022-10-06T19:57Z
+  supported_organisms: supported_organisms.html
+last_built: 2023-02-12T15:10Z
 

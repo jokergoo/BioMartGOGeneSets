@@ -1,8 +1,12 @@
 ---
 title: "BioMart Gene Ontology Gene Sets Collections"
-author: "Zuguang Gu ( z.gu@dkfz.de )"
+author: "Zuguang Gu (z.gu@dkfz.de)"
 date: '`r Sys.Date()`'
-output: html_document
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{BioMart Gene Ontology Gene Sets Collections}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 <style type="text/css">
@@ -21,32 +25,13 @@ knitr::opts_chunk$set(
     message = FALSE,
     echo = FALSE)
 library(GetoptLong)
-library(rGREAT)
 library(DT)
-```
-
-First load the **BioMartGOGeneSets** package.
-
-```{r, echo = TRUE}
 library(BioMartGOGeneSets)
-```
-
-Get genes for a specific organism. The proper value of `dataset` can be found in the tables at the end of this document.
-
-```{r, eval = FALSE, echo = TRUE}
-getBioMartGenes(dataset)
-```
-
-Get GO gene sets for a specific organism.
-
-
-```{r, eval = FALSE, echo = TRUE}
-getBioMartGOGeneSets(dataset, ontology = "BP")
 ```
 
 
 ```{r}
-table = readRDS("all_supported_organisms.rds")
+table = readRDS(system.file("extdata", "all_supported_organisms.rds", package = "BioMartGOGeneSets"))
 table$genesets = paste0("BP (", table$n_bp_genesets, "), CC (", table$n_cc_genesets, "), MF (", table$n_mf_genesets, ")")
 colnames(table)[colnames(table) == "n_gene"] = "genes"
 df_genes = table[table$mart == "genes_mart", c("dataset", "name", "version", "taxon_id", "genbank_accession", "genesets"), drop = FALSE]
@@ -62,14 +47,7 @@ Version information:
 BioMartGOGeneSets
 ```
 
-Source code for retrieving GO gene sets can be obtained here:
 
-```{r, echo = TRUE}
-system.file("scripts", "biomart_genesets.R", package = "BioMartGOGeneSets")
-```
-
-
-<hr>
 
 # {.tabset}
 

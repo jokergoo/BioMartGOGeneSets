@@ -1,8 +1,40 @@
 
 
 library(GetoptLong)
-get_datasets = function(ensembl, label = "", overwrite = FALSE) {
+
+organism_meta_file = c(
+	"genes_mart" = "~/project/development/BioMartGOGeneSets/inst/extdata/ensembl_vertebrates.csv",
+	"protists_mart" = "~/project/development/BioMartGOGeneSets/inst/extdata/ensembl_protists.csv",
+	"fungi_mart" = "~/project/development/BioMartGOGeneSets/inst/extdata/ensembl_fungi.csv",
+	"metazoa_mart" = "~/project/development/BioMartGOGeneSets/inst/extdata/ensembl_metazoa.csv",
+	"plants_mart" = "~/project/development/BioMartGOGeneSets/inst/extdata/ensembl_plants.csv"
+)
+
+library(stringdist)
+
+get_datasets = function(ensembl, label = "", overwrite = TRUE) {
 	datasets = listDatasets(ensembl)
+	# add more columns to `dataset`
+	meta = read.csv(organism_meta_file[[label]])
+	if(label == "genes_mart") {
+		rownames(meta) = meta[, "Ensembl.Assembly"]
+		datasets$name = paste0(meta[ datasets$version, "Scientific.name"], " (", meta[ datasets$version, "Common.name"], ")")
+		datasets$taxon_id = meta[ datasets$version, "Taxon.ID"]
+		datasets$genbank_accession = meta[ datasets$version, "Accession"]
+	} else {
+		meta[, "Name"] = gsub(" \\(GCA.*\\)$", "", meta[, "Name"])
+		meta[, "Name"] = gsub(" - GCA.*$", "", meta[, "Name"])
+
+		ind = sapply(datasets$description, function(x) {
+			d = stringdist(paste0(meta[, "Name"], " (", meta[, "Assembly"], ")"), x)
+			which.min(d)
+		})
+
+		datasets$name = meta[ ind, "Name"]
+		datasets$taxon_id = meta[ ind, "Taxon.ID"]
+		datasets$genbank_accession = meta[ ind, "Accession"]
+
+	}
 
 	removed_da = NULL
 	
@@ -10,10 +42,10 @@ get_datasets = function(ensembl, label = "", overwrite = FALSE) {
 	for(da in datasets[, 1]) {
 		qqcat("@{da}\n")
 
-		# if(da %in% c("elucius_gene_ensembl")) {
-		# 	removed_da = c(removed_da, da)
-		# 	next
-		# }
+		if(da %in% c("elucius_gene_ensembl")) {
+			removed_da = c(removed_da, da)
+			next
+		}
 
 		ensembl = useDataset(dataset = da, mart = ensembl)
 		all_at = listAttributes(mart = ensembl)
@@ -98,15 +130,15 @@ setwd("~/project/development/BioMartGOGeneSets_data")
 #### download data from BioMart in the original format   ##########
 
 library(biomaRt)
-ensembl = useEnsembl(biomart = "genes")
+ensembl = useEnsembl(biomart = "genes", mirror = "www")
 # attributes = listAttributes(ensembl)
-get_datasets(ensembl, "genes_mart")
+get_datasets(ensembl, "genes_mart", overwrite = TRUE)
 
 listEnsemblGenomes()
 
 for(mart in c("protists_mart", "fungi_mart", "metazoa_mart", "plants_mart")) {
 	ensembl = useEnsemblGenomes(biomart = mart)
-	get_datasets(ensembl, mart)
+	get_datasets(ensembl, mart, overwrite = TRUE)
 }
 
 ####################################
@@ -122,8 +154,8 @@ for(f in all_files) {
 	df = df[df$start_position <= df$end_position, , drop = FALSE]
 
 	chr = as.character(as.vector(tapply(df$chromosome_name, df$ensembl_gene_id, function(x) x[1])))
-	start = as.vector(tapply(df$start_position, df$ensembl_gene_id, function(x) x[1]))
-	end = as.vector(tapply(df$end_position, df$ensembl_gene_id, function(x) x[1]))
+	start = as.numeric(as.vector(tapply(df$start_position, df$ensembl_gene_id, function(x) x[1])))
+	end = as.numeric(as.vector(tapply(df$end_position, df$ensembl_gene_id, function(x) x[1])))
 	strand = as.vector(tapply(df$strand, df$ensembl_gene_id, function(x) x[1]))
 	ensembl_gene_id = as.vector(tapply(df$ensembl_gene_id, df$ensembl_gene_id, function(x) x[1]))
 
@@ -235,7 +267,67 @@ rownames(tb) = tb[, 1]
 
 saveRDS(tb, file = "all_supported_organisms.rds", compress = "xz")
 
+d = NULL
+for(i in seq_len(nrow(tb2))) {
+	d[i] = stringdist(gsub("( genes )?\\(.*\\)", "", tb2$description[i]), gsub("\\(.*\\)", "", tb2$name[i]))
+}
+
+# manually check
+tb["aastaci_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["aastaci_eg_gene", "description"])
+tb["aastaci_eg_gene", "taxon_id"] = "112090"
+tb["aastaci_eg_gene", "genbank_accession"] = "GCA_000520075.1"
+
+tb["ainvadans_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["ainvadans_eg_gene", "description"])
+tb["ainvadans_eg_gene", "taxon_id"] = "157072"
+tb["ainvadans_eg_gene", "genbank_accession"] = "GCA_000520115.1"
+
+tb["gultimum_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["gultimum_eg_gene", "description"])
+tb["gultimum_eg_gene", "taxon_id"] = "431595"
+tb["gultimum_eg_gene", "genbank_accession"] = "GCA_000143045.1"
 
 
+# tb["pgraminisug99_eg_gene", "genbank_accession"] = "GCA_000149925.1"
+# tb["choffmanni_gene_ensembl", "genbank_accession"] = "GCA_000164785.2"
+# tb["csavignyi_gene_ensembl", "genbank_accession"] = "GCA_000149265.1"
+# tb["eeuropaeus_gene_ensembl", "genbank_accession"] = "GCA_000296755.1"
+# tb["etelfairi_gene_ensembl", "genbank_accession"] = 
+# tb["gaculeatus_gene_ensembl", "genbank_accession"] = 
+# tb["oprinceps_gene_ensembl", "genbank_accession"] = 
+# tb["pcapensis_gene_ensembl", "genbank_accession"] = 
+# tb["pmarinus_gene_ensembl", "genbank_accession"] = 
+# tb["pvampyrus_gene_ensembl", "genbank_accession"] = 
+# tb["saraneus_gene_ensembl", "genbank_accession"] = 
+# tb["tbelangeri_gene_ensembl", "genbank_accession"] = 
+# tb["tnigroviridis_gene_ensembl", "genbank_accession"] = 
+# tb["ttruncatus_gene_ensembl", "genbank_accession"] = "GCA_001922835.1"
+# tb["vpacos_gene_ensembl", "genbank_accession"] = 
+# tb["csonorensis_eg_gene", "genbank_accession"] = 
+# tb["lsalmonis_eg_gene", "genbank_accession"] = 
+# tb["alaibachii_eg_gene", "genbank_accession"] = 
 
+## add ncbi genome link
+library(rvest)
+tb$ncbi_genome_link = NA
+for(i in seq_len(nrow(tb))) {
+	cat(i, "/", nrow(tb), "...\n")
+	base_link = "https://ftp.ncbi.nih.gov/genomes/all/GCA"
+	code1 = substr(tb[i, "genbank_accession"], 5, 5+2)
+	code2 = substr(tb[i, "genbank_accession"], 8, 8+2)
+	code3 = substr(tb[i, "genbank_accession"], 11, 11+2)
+	base_link = qq("@{base_link}/@{code1}/@{code2}/@{code3}/")
+
+	oe = try(html <- read_html(base_link))
+	if(!inherits(oe, "try-error")) {
+		assembly = html %>% html_elements("a") %>% html_text()
+		assembly = assembly[-c(1, length(assembly))]
+		assembly = gsub("/$", "", assembly)
+		assembly = assembly[ grepl(tb[i, "genbank_accession"], assembly) ]
+		if(length(assembly)) {
+			link = qq("@{base_link}/@{assembly}/@{assembly}_assembly_report.txt")
+			tb$ncbi_genome_link[i] = link
+		}
+	}
+}
+
+saveRDS(tb, file = "all_supported_organisms.rds", compress = "xz")
 

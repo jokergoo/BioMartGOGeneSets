@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BioMartGOGeneSets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.9</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
     </li>
     <li>
       <a href="../articles/genesets.html">Pre-compiled GO Gene Sets</a>
+    </li>
+    <li>
+      <a href="../articles/supported_organisms.html">BioMart Gene Ontology Gene Sets Collections</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -69,7 +72,7 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>dataset</dt>
-<dd><p>A BioMart dataset. For a proper value, please see <code><a href="supportedOrganisms.html">supportedOrganisms</a></code>.</p></dd>
+<dd><p>A BioMart dataset or a taxon ID. For a proper value, please see <code><a href="supportedOrganisms.html">supportedOrganisms</a></code>.</p></dd>
 
   <dt>add_chr_prefix</dt>
 <dd><p>Whether to add "chr" prefix to chromosome names? If it is ture, it uses <code>GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"</code> to add the prefix.</p></dd>
@@ -95,7 +98,7 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gr</span> <span class="op">=</span> <span class="fu">getBioMartGenes</span><span class="op">(</span><span class="st">"hsapiens_gene_ensembl"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 68324 ranges and 4 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 69299 ranges and 4 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   seqnames              ranges strand | ensembl_gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |     &lt;character&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003        X 100627108-100639991      - | ENSG00000000003</span>
@@ -104,29 +107,29 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457        1 169849631-169894267      - | ENSG00000000457</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460        1 169662007-169854080      + | ENSG00000000460</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               ...      ...                 ...    ... .             ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290162        X 119807433-119807581      - | ENSG00000290162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290163        X 119815164-119815307      - | ENSG00000290163</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290164        X 119822906-119823043      - | ENSG00000290164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290165        X 119831616-119831759      - | ENSG00000290165</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290166       19     1163451-1165333      + | ENSG00000290166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                             gene_biotype   entrezgene_id external_gene_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              &lt;character&gt; &lt;CharacterList&gt;        &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003         protein_coding            7105             TSPAN6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000005         protein_coding           64102               TNMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000419         protein_coding            8813               DPM1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457         protein_coding           57147              SCYL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460         protein_coding           55732           C1orf112</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               ...                    ...             ...                ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290162 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290163 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290164 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290165 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290166                 lncRNA            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291313       14 103334237-103335932      + | ENSG00000291313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291314        X   10566888-10576955      - | ENSG00000291314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291315        3   40312086-40312214      + | ENSG00000291315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291316        8 144449582-144465430      - | ENSG00000291316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291317        8 144463817-144465667      - | ENSG00000291317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     gene_biotype   entrezgene_id external_gene_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      &lt;character&gt; &lt;CharacterList&gt;        &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003 protein_coding            7105             TSPAN6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000005 protein_coding           64102               TNMD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000419 protein_coding            8813               DPM1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457 protein_coding           57147              SCYL3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460 protein_coding           55732           C1orf112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               ...            ...             ...                ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291313 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291314 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291315 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291316 protein_coding          157542               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291317 protein_coding           84773            TMEM276</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 445 sequences from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span><span class="va">gr</span> <span class="op">=</span> <span class="fu">getBioMartGenes</span><span class="op">(</span><span class="st">"hsapiens_gene_ensembl"</span>, add_chr_prefix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 68324 ranges and 4 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 69299 ranges and 4 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   seqnames              ranges strand | ensembl_gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |     &lt;character&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003     chrX 100627108-100639991      - | ENSG00000000003</span>
@@ -135,24 +138,24 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457     chr1 169849631-169894267      - | ENSG00000000457</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460     chr1 169662007-169854080      + | ENSG00000000460</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               ...      ...                 ...    ... .             ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290162     chrX 119807433-119807581      - | ENSG00000290162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290163     chrX 119815164-119815307      - | ENSG00000290163</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290164     chrX 119822906-119823043      - | ENSG00000290164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290165     chrX 119831616-119831759      - | ENSG00000290165</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290166    chr19     1163451-1165333      + | ENSG00000290166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                             gene_biotype   entrezgene_id external_gene_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              &lt;character&gt; &lt;CharacterList&gt;        &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003         protein_coding            7105             TSPAN6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000005         protein_coding           64102               TNMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000419         protein_coding            8813               DPM1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457         protein_coding           57147              SCYL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460         protein_coding           55732           C1orf112</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               ...                    ...             ...                ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290162 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290163 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290164 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290165 unprocessed_pseudogene            &lt;NA&gt;               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000290166                 lncRNA            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291313    chr14 103334237-103335932      + | ENSG00000291313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291314     chrX   10566888-10576955      - | ENSG00000291314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291315     chr3   40312086-40312214      + | ENSG00000291315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291316     chr8 144449582-144465430      - | ENSG00000291316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291317     chr8 144463817-144465667      - | ENSG00000291317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     gene_biotype   entrezgene_id external_gene_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      &lt;character&gt; &lt;CharacterList&gt;        &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000003 protein_coding            7105             TSPAN6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000005 protein_coding           64102               TNMD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000419 protein_coding            8813               DPM1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000457 protein_coding           57147              SCYL3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000000460 protein_coding           55732           C1orf112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               ...            ...             ...                ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291313 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291314 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291315 protein_coding            &lt;NA&gt;               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291316 protein_coding          157542               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000291317 protein_coding           84773            TMEM276</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 445 sequences from an unspecified genome; no seqlengths</span>
 </code></pre></div>
@@ -169,7 +172,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

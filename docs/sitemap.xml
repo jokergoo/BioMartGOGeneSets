@@ -16,6 +16,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/supported_organisms.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -25,10 +28,16 @@
     <loc>/reference/BioMartGOGeneSets.html</loc>
   </url>
   <url>
+    <loc>/reference/changeSeqnameStyle.html</loc>
+  </url>
+  <url>
     <loc>/reference/getBioMartGOGeneSets.html</loc>
   </url>
   <url>
     <loc>/reference/getBioMartGenes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getBioMartGenomeInfo.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>

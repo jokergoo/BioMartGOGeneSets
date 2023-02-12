@@ -27,8 +27,8 @@ There are two types of data: 1. genes and 2 gene sets.
 
 To obtain the genes, use the function `getBioMartGenes()`. You need to provide
 a proper "dataset", which can be found with the function `supportedOrganisms()` (A complete list can
-be also found from https://htmlpreview.github.io/?https://github.com/jokergoo/BioMartGOGeneSets/blob/master/inst/extdata/global_table.html). Here
-we use the dataset `"hsapiens_gene_ensembl"` which is for human.
+be also found from "[**BioMart Gene Ontology Gene Sets Collections**](supported_organisms.html))". Here
+we use the dataset `"hsapiens_gene_ensembl"` as an example which is for human.
 
 ```{r}
 library(BioMartGOGeneSets)
@@ -52,6 +52,12 @@ You can try the following command and see what will be printed:
 gr = getBioMartGenes("human")
 ```
 
+You can also provide the taxon id for the organism:
+
+```{r, eval = FALSE}
+gr = getBioMartGenes(9606)
+```
+
 Chromosome names from Ensembl have no "chr" prefix. You can set `add_chr_prefix = TURE` to add `"chr"` prefix to some
 of the chromosome names. Internally it uses `GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"` to check and to add `"chr"` prefix.
 
@@ -64,9 +70,54 @@ Note `add_chr_prefix` is just a helper argument. You can basically do the same a
 
 ```{r}
 gr = getBioMartGenes("hsapiens_gene_ensembl")
-seqlevelsStyle(gr) = "UCSC"
+GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"
 gr
 ```
+
+For some not-well-studied organisms, there might be no "official chromosome name". For example, `"cporcellus_gene_ensembl"` for the guinea Pig:
+
+```{r}
+gr = getBioMartGenes("cporcellus_gene_ensembl")
+gr
+```
+
+The sequence names are in a special format of `DS\d+`. The source of the format can be obtained by `getBioMartGenomeInfo()`. In the `seqname_style` element of the returned list, there are several examples that you can compare to.
+
+```{r}
+getBioMartGenomeInfo("cporcellus_gene_ensembl")
+```
+
+Now we know they are the GenBank accession IDs. Next we might want to change them to the `"Sequence-Name"` style. Simply 
+use `changeSeqnameStyle()`.
+
+```{r}
+gr2 = changeSeqnameStyle(gr, "cporcellus_gene_ensembl", 
+    seqname_style_from = "GenBank-Accn", 
+    seqname_style_to = "Sequence-Name")
+gr2
+```
+
+Sometimes the internal sequence names need to be reformatted to fit the input `gr`. In the second example ( `"apercula_gene_ensembl"` for the orange clownfish), the sequence names are in format of `1, 2, 3, ...`, while internally they are represented as `chr1, chr2, ...`.
+
+```{r}
+gr = getBioMartGenes("apercula_gene_ensembl")
+gr
+getBioMartGenomeInfo("apercula_gene_ensembl")
+```
+
+In this case, we need to set the argument `reformat_from` as a function to reformat the internal format to fit the sequence names in `gr`.
+Also you can set `reformat_to` as a function to reformat the converted sequence names.
+
+```{r}
+gr2 = changeSeqnameStyle(gr, "apercula_gene_ensembl", 
+    seqname_style_from = "Sequence-Name", 
+    seqname_style_to = "GenBank-Accn", 
+    reformat_from =function(x) gsub("chr", "", x),
+    reformat_to = function(x) gsub("\\.\\d+$", "", x)
+)
+gr2
+```
+
 
 ## Retrieve gene sets
 
@@ -86,6 +137,12 @@ You can try the following command and see what will be printed:
 
 ```{r, eval = FALSE}
 lt = getBioMartGOGeneSets("mouse")
+```
+
+Remember you can also set the taxon ID:
+
+```{r, eval = FALSE}
+lt = getBioMartGOGeneSets(10090)
 ```
 
 In `getBioMartGOGeneSets()`, argument `as_table` can be set to `TRUE`, then the function returns

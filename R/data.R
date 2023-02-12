@@ -12,10 +12,10 @@
 # == example
 # BioMartGOGeneSets
 BioMartGOGeneSets = list(
-	built_date = "2022-09-20",
+	built_date = "2023-02-11",
 	source = "https://www.ensembl.org/info/data/biomart/index.html",
-	biomaRt_version = "2.52.0",
-	GO.db_version = "3.15.0"
+	biomaRt_version = "2.54.0",
+	GO.db_version = "3.16.0"
 )
 class(BioMartGOGeneSets) = "BioMartGOGeneSets_info"
 
@@ -44,7 +44,7 @@ print.BioMartGOGeneSets_info = function(x, ...) {
 # Get GO gene sets
 #
 # == param
-# -dataset A BioMart dataset. For a proper value, please see `supportedOrganisms`.
+# -dataset A BioMart dataset or a taxon ID. For a proper value, please see `supportedOrganisms`.
 # -ontology The value should be "BP", "CC", or "MF".
 # -as_table Whether to return the value as a data frame?
 # -gene_id_type Since BioMart is from Ensembl database, the default gene ID type is Ensembl gene ID.
@@ -117,7 +117,7 @@ getBioMartGOGeneSets = function(dataset, ontology = "BP",
 # Get genes from BioMart
 #
 # == param
-# -dataset A BioMart dataset. For a proper value, please see `supportedOrganisms`.
+# -dataset A BioMart dataset or a taxon ID. For a proper value, please see `supportedOrganisms`.
 # -add_chr_prefix Whether to add "chr" prefix to chromosome names? If it is ture, it uses ``GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"`` to add the prefix.
 #
 # == details
@@ -149,19 +149,141 @@ getBioMartGenes = function(dataset, add_chr_prefix = FALSE) {
 	gr
 }
 
+# == title
+# Change sequence names
+#
+# == param
+# -gr The input regions
+# -dataset A BioMart dataset or a taxon ID. For a proper value, please see `supportedOrganisms`.
+# -seqname_style_from Value should be in ``c("Sequence-Name", "GenBank-Accn", "RefSeq-Accn")``. If you
+#        are not sure which seqname style is in ``gr``, use `getBioMartGenomeInfo` to obtain list of examples.
+# -seqname_style_to Value should be in ``c("Sequence-Name", "GenBank-Accn", "RefSeq-Accn")``.
+# -reformat_from A self-defined function to reformat the seqnames. The internal seqname style can be obtained via ``getBioMartGenomeInfo(dataset)``. This 
+#       function converts the internal "from" seqnames to fit the user's input regions.
+# -reformat_to A self-defined function to reformat the seqnames.
+#
+# == details
+# Please the conversion is not one to one. For those sequences which cannot be corrected mapped to other styles,
+# they are just removed.
+#
+# == value
+# A `GenomicRanges::GRanges` object.
+#
+# == example
+# \dontrun{
+# gr = getBioMartGenes("giant panda")
+# changeSeqnameStyle(gr, "giant panda", "Sequence-Name", "GenBank-Accn")
+# }
+changeSeqnameStyle = function(gr, dataset, seqname_style_from, seqname_style_to, 
+	reformat_from = NULL, reformat_to = NULL) {
+	
+	if(!seqname_style_from %in% c("Sequence-Name", "GenBank-Accn", "RefSeq-Accn")) {
+		stop("`seqname_style_from` should take value in 'Sequence-Name', 'GenBank-Accn' and 'RefSeq-Accn'.")
+	}
+	if(!seqname_style_to %in% c("Sequence-Name", "GenBank-Accn", "RefSeq-Accn")) {
+		stop("`seqname_style_to` should take value in 'Sequence-Name', 'GenBank-Accn' and 'RefSeq-Accn'.")
+	}
+
+	dataset = validate_dataset(dataset)
+	ind = which(ORGANISM_TABLE$dataset == dataset)
+	if(is.na(ORGANISM_TABLE[ind, "ncbi_genome_link"])) {
+		stop(paste0("Cannot find source to convert seqnames for dataset '", dataset, "'."))
+	}
+	genome_tb = get_data(ORGANISM_TABLE[ind, "ncbi_genome_link"], read.table, sep = "\t")
+	colnames(genome_tb) = c("Sequence-Name", "Sequence-Role", "Assigned-Molecule", "Assigned-Molecule-Location/Type", "GenBank-Accn", "Relationship", "RefSeq-Accn", "Assembly-Unit", "Sequence-Length", "UCSC-style-name")
+
+	if(seqname_style_from != "Sequence-Name") {
+		if(is.null(reformat_from)) {
+			reformat_from = function(x) gsub("\\.\\d+$", "", x)
+		}
+	}
+	if(!is.null(reformat_from)) {
+		genome_tb[, seqname_style_from] = reformat_from(genome_tb[, seqname_style_from])
+	}
+
+	map = structure(genome_tb[, seqname_style_to], 
+		    names = genome_tb[, seqname_style_from])
+
+
+	if(!is.null(reformat_to)) {
+		map = structure(unname(reformat_to(map)), names = names(map))
+	}
+
+	if(length(table(table(map))) > 1) {
+		stop(paste0("Mapping from '", seqname_style_from, "' to '", seqname_style_to, "' is not one to one."))
+	}
+
+	chr = as.character(as.vector(seqnames(gr)))
+	if(seqname_style_from == "Sequence-Name") {
+		chr2 = map[chr]
+	} else {
+		chr2 = map[gsub("\\.\\d+$", "", chr)]
+	}
+	l = !is.na(chr2)
+	gr2 = GRanges(seqnames = chr2[l], ranges = ranges(gr)[l], strand = strand(gr)[l])
+	mcols(gr2) = mcols(gr)[l, ]
+	mcols(gr2)$.original_seqname = chr[l]
+	gr2
+}
+
+# == title
+# Get genome information
+#
+# == param
+# -dataset A BioMart dataset or a taxon ID. For a proper value, please see `supportedOrganisms`.
+#
+# == value
+# A list.
+#
+# == example
+# getBioMartGenomeInfo(9606)
+getBioMartGenomeInfo = function(dataset) {
+	dataset = validate_dataset(dataset)
+	if(grepl("^\\d+$", dataset)) {
+		ind = which(ORGANISM_TABLE$taxon_id == dataset)
+		if(length(ind)) {
+			dataset = ORGANISM_TABLE$dataset[ind]
+		}
+	}
+	ind = which(ORGANISM_TABLE$dataset == dataset)
+	if(length(ind)) {
+		lt = as.list(ORGANISM_TABLE[ind, ])
+		lt = lt[c("dataset", "version", "name", "taxon_id", "genbank_accession", "mart")]
+
+		if(!is.na(ORGANISM_TABLE[ind, "ncbi_genome_link"])) {
+			genome_tb = get_data(ORGANISM_TABLE[ind, "ncbi_genome_link"], read.table, sep = "\t")
+			colnames(genome_tb) = c("Sequence-Name", "Sequence-Role", "Assigned-Molecule", "Assigned-Molecule-Location/Type", "GenBank-Accn", "Relationship", "RefSeq-Accn", "Assembly-Unit", "Sequence-Length", "UCSC-style-name")
+
+			genome_tb = genome_tb[seq_len(min(5, nrow(genome_tb))), ]
+			chr_style = as.list(genome_tb[, c("Sequence-Name", "GenBank-Accn", "RefSeq-Accn")])
+			lt$seqname_style = chr_style
+		}
+
+		return(lt)
+	} else {
+		stop(paste0("Cannot find dataset '", dataset, "'."))
+	}
+}
+
 validate_dataset = function(dataset) {
+	if(grepl("^\\d+$", dataset)) {
+		ind = which(ORGANISM_TABLE$taxon_id == dataset)
+		if(length(ind)) {
+			dataset = ORGANISM_TABLE$dataset[ind]
+		}
+	}
 	ind = which(ORGANISM_TABLE$dataset %in% dataset)
 
 	if(length(ind)) {
 		return(dataset)
 	} else {
-		ind = which(grepl(dataset, ORGANISM_TABLE$dataset) | grepl(dataset, ORGANISM_TABLE$description, ignore.case = TRUE))
+		ind = which(grepl(dataset, ORGANISM_TABLE$dataset) | grepl(dataset, ORGANISM_TABLE$name, ignore.case = TRUE))
 		if(length(ind) == 1) {
 			return(ORGANISM_TABLE$dataset[ind])
 		} else if(length(ind) > 1) {
 			message("Found more than one dataset with query '", dataset, "':")
 			for(i in seq_along(ind)) {
-				message("  [", i, "] dataset: ", ORGANISM_TABLE$dataset[ind[i]], "; description: ", ORGANISM_TABLE$description[ind[i]])
+				message("  [", i, "] dataset: ", ORGANISM_TABLE$dataset[ind[i]], "; name: ", ORGANISM_TABLE$name[ind[i]], "; taxon_id: ", ORGANISM_TABLE$taxon_id[ind[i]])
 			}
 			
 			select = readline(prompt = "Please select which dataset you want to use: ")
@@ -206,13 +328,13 @@ supportedOrganisms = function(html = TRUE) {
 
 
 .env = new.env()
-get_data = function(url) {
+get_data = function(url, fun = readRDS, ...) {
 	filename = basename(url)
 	if(is.null(.env[[filename]])) {
 		tmp = tempfile()
 		on.exit(file.remove(tmp))
 		download.file(url, destfile = tmp, quiet = TRUE)
-		obj = readRDS(tmp)
+		obj = fun(tmp, ...)
 		.env[[filename]] = obj
 	} else {
 		obj = .env[[filename]]

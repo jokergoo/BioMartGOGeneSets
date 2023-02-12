@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BioMartGOGeneSets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.9</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
     </li>
     <li>
       <a href="../articles/genesets.html">Pre-compiled GO Gene Sets</a>
+    </li>
+    <li>
+      <a href="../articles/supported_organisms.html">BioMart Gene Ontology Gene Sets Collections</a>
     </li>
   </ul>
 </li>
@@ -81,7 +84,7 @@
       <h1 data-toc-skip>Retrieve GO Gene Sets from BioMart</h1>
                         <h4 data-toc-skip class="author">Zuguang Gu (<a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a>)</h4>
             
-            <h4 data-toc-skip class="date">2022-10-06</h4>
+            <h4 data-toc-skip class="date">2023-02-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/BioMartGOGeneSets/blob/HEAD/vignettes/biomart.Rmd" class="external-link"><code>vignettes/biomart.Rmd</code></a></small>
       <div class="hidden name"><code>biomart.Rmd</code></div>
@@ -93,25 +96,30 @@
 <p>This vignette demonstrates how to manually collect GO gene sets from <a href="https://www.ensembl.org/info/data/biomart/index.html" class="external-link">BioMart</a>. The source code for retrieving GO gene sets for all supported organisms on BioMart can be found from the following location:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"scripts"</span>, <span class="st">"biomart_genesets.R"</span>, package <span class="op">=</span> <span class="st">"BioMartGOGeneSets"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "/private/var/folders/g3/f2y6rp510nxf3t5sj6h902bc0000gr/T/RtmpYQMNDL/temp_libpath5f9531446582/BioMartGOGeneSets/scripts/biomart_genesets.R"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "/private/var/folders/g3/f2y6rp510nxf3t5sj6h902bc0000gr/T/Rtmpd7g1fJ/temp_libpath9782166ad12d/BioMartGOGeneSets/scripts/biomart_genesets.R"</span></span></code></pre>
 <p>Retrieving GO gene sets from BioMart is a two-step process.</p>
 <div class="section level3">
 <h3 id="step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism">Step1. Retrieve the relations between GO terms and genes for a specific organism<a class="anchor" aria-label="anchor" href="#step1--retrieve-the-relations-between-go-terms-and-genes-for-a-specific-organism"></a>
 </h3>
 <p>The relations can be obtained from BioMart with the R package <strong>biomaRt</strong>. First let’s create a “Mart” object which is like a connection to the BioMart web-service. Because this is a gene-related relation, we set argument <code>biomart</code> to <code>"genes"</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">biomaRt</span><span class="op">)</span></span>
-<span><span class="va">ensembl</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html" class="external-link">useEnsembl</a></span><span class="op">(</span>biomart <span class="op">=</span> <span class="st">"genes"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">biomaRt</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: package 'biomaRt' was built under R version 4.2.1</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ensembl</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html" class="external-link">useEnsembl</a></span><span class="op">(</span>biomart <span class="op">=</span> <span class="st">"genes"</span><span class="op">)</span></span>
 <span><span class="va">ensembl</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class 'Mart':</span></span>
 <span><span class="co">##   Using the ENSEMBL_MART_ENSEMBL BioMart database</span></span>
 <span><span class="co">##   No dataset selected.</span></span></code></pre>
+<p>Please note, if later when you use <strong>biomaRt</strong> and see errors of “timeout”, you can select a different mirror, such as:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html" class="external-link">useEnsembl</a></span><span class="op">(</span>biomart <span class="op">=</span> <span class="st">"genes"</span>, mirror <span class="op">=</span> <span class="st">"uswest"</span><span class="op">)</span></span></code></pre></div>
 <p>Next we need to select an organism. In BioMart, it is called a “dataset”. To get a proper value of an organism dataset, we can use <code><a href="https://rdrr.io/pkg/biomaRt/man/listDatasets.html" class="external-link">listDatasets()</a></code> to get a list of supported datasets.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datasets</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listDatasets.html" class="external-link">listDatasets</a></span><span class="op">(</span><span class="va">ensembl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">datasets</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 215   3</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 213   3</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datasets</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                        dataset                           description</span></span>
 <span><span class="co">## 1 abrachyrhynchus_gene_ensembl Pink-footed goose genes (ASM259213v1)</span></span>
@@ -131,18 +139,18 @@
 <p>Sometimes it is not easy to find the dataset of your organism, especially when the organism is not a model organism. The second column in <code>datasets</code> contains dataset descriptions, which sometimes can be helpful to find the right one.</p>
 <p>In this example, we use the dataset for human <code>"hsapiens_gene_ensembl"</code>.</p>
 <p>To use the dataset, we specify <code>dataset</code> in the function <code>useDateset()</code>, which is like adding a flag of which dataset to use.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ensembl</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useDataset.html" class="external-link">useDataset</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"hsapiens_gene_ensembl"</span>, mart <span class="op">=</span> <span class="va">ensembl</span><span class="op">)</span></span>
 <span><span class="va">ensembl</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class 'Mart':</span></span>
 <span><span class="co">##   Using the ENSEMBL_MART_ENSEMBL BioMart database</span></span>
 <span><span class="co">##   Using the hsapiens_gene_ensembl dataset</span></span></code></pre>
 <p>The dataset is like a giant table with a huge number of columns which provide massive additional information for genes. Here we are only interested in GO-related information. In the dataset, the table columns are called “attributes”. There are a huge number of supported attributes in a dataset. The complete list of attributes can be obtained by the function <code><a href="https://rdrr.io/pkg/biomaRt/man/listAttributes.html" class="external-link">listAttributes()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_at</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listAttributes.html" class="external-link">listAttributes</a></span><span class="op">(</span>mart <span class="op">=</span> <span class="va">ensembl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">all_at</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 3176    3</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 3156    3</span></span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_at</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                            name                  description         page</span></span>
 <span><span class="co">## 1               ensembl_gene_id               Gene stable ID feature_page</span></span>
@@ -152,11 +160,11 @@
 <span><span class="co">## 5            ensembl_peptide_id            Protein stable ID feature_page</span></span>
 <span><span class="co">## 6    ensembl_peptide_id_version    Protein stable ID version feature_page</span></span></code></pre>
 <p>To get proper values for the attributes, we need to go through the long table and sometimes this is not an easy task. The three attributes of GO-gene relations are <code>c("ensembl_gene_id", "go_id", "namespace_1003")</code>. Now we can use the function <code><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM()</a></code> to obtain the GO-gene relation table.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">at</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ensembl_gene_id"</span>, <span class="st">"go_id"</span>, <span class="st">"namespace_1003"</span><span class="op">)</span></span>
 <span><span class="va">go</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="va">at</span>, mart <span class="op">=</span> <span class="va">ensembl</span><span class="op">)</span></span></code></pre></div>
 <p>Check the first several rows in <code>go</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">go</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   ensembl_gene_id      go_id     namespace_1003</span></span>
 <span><span class="co">## 1 ENSG00000210049 GO:0030533 molecular_function</span></span>
@@ -164,19 +172,19 @@
 <span><span class="co">## 3 ENSG00000211459 GO:0003735 molecular_function</span></span>
 <span><span class="co">## 4 ENSG00000211459 GO:0005840 cellular_component</span></span>
 <span><span class="co">## 5 ENSG00000210077                              </span></span>
-<span><span class="co">## 6 ENSG00000210082</span></span></code></pre>
+<span><span class="co">## 6 ENSG00000210082 GO:0003735 molecular_function</span></span></code></pre>
 <p>For some organisms, the returned table might be huge, or due to the bad internet connection, the data retrieving may exceed the 5 min limit on BioMart, and you might see the following error:</p>
 <pre><code>Error in curl::curl_fetch_memory(url, handle = handle) :
   Timeout was reached: [uswest.ensembl.org:443] Operation timed out after 300005 milliseconds with 2966434 bytes received</code></pre>
 <p>In this case, you might need to split the query into blocks and make sure each job query is small.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genes</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="st">"ensembl_gene_id"</span>, mart <span class="op">=</span> <span class="va">ensembl</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">go1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="va">at</span>, mart <span class="op">=</span> <span class="va">ensembl</span>, filter <span class="op">=</span> <span class="st">"ensembl_gene_id"</span>, value <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">go2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="va">at</span>, mart <span class="op">=</span> <span class="va">ensembl</span>, filter <span class="op">=</span> <span class="st">"ensembl_gene_id"</span>, value <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1001</span><span class="op">:</span><span class="fl">2000</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">...</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">go1</span>, <span class="va">go2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p>In this example, we will only demonstrate the Biological Process Ontology, and we convert the data frame <code>go</code> to a list of genes.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">go</span> <span class="op">=</span> <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">$</span><span class="va">namespace_1003</span> <span class="op">==</span> <span class="st">"biological_process"</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="va">gs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">go</span><span class="op">$</span><span class="va">ensembl_gene_id</span>, <span class="va">go</span><span class="op">$</span><span class="va">go_id</span><span class="op">)</span></span></code></pre></div>
 <p>In <code>gs</code>, there are a list of vectors where each vector can be thought as a gene set for the corresponding GO term.</p>
@@ -186,15 +194,21 @@
 </h3>
 <p>GO has a tree structure where a parent term includes all genes annotated to its child terms. For every GO terms in <code>gs</code>, we need to merge genes from all its child or offspring terms to form a complete gene set for this GO term.</p>
 <p>The hierarchical structure of GO terms is stored in the <strong>GO.db</strong> package. In the following code, <code>bp_terms</code> contains a vector of GO terms only in the Biological Process ontology. The variable <code>GOBPOFFSPRING</code> is simply a list where each element vector contains all offspring terms (child and remote downstream terms) of a GO term.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GO.db</span><span class="op">)</span></span>
-<span><span class="va">bp_terms</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/GOColsAndKeytypes.html" class="external-link">GOID</a></span><span class="op">(</span><span class="va">GOTERM</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/Ontology.html" class="external-link">Ontology</a></span><span class="op">(</span><span class="va">GOTERM</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BP"</span><span class="op">]</span></span>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GO.db</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: package 'AnnotationDbi' was built under R version 4.2.1</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: package 'BiocGenerics' was built under R version 4.2.1</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: package 'Biobase' was built under R version 4.2.1</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: package 'IRanges' was built under R version 4.2.1</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: package 'S4Vectors' was built under R version 4.2.2</span></span></code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bp_terms</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/GOColsAndKeytypes.html" class="external-link">GOID</a></span><span class="op">(</span><span class="va">GOTERM</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/Ontology.html" class="external-link">Ontology</a></span><span class="op">(</span><span class="va">GOTERM</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BP"</span><span class="op">]</span></span>
 <span><span class="va">GOBPOFFSPRING</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="va">GOBPOFFSPRING</span><span class="op">)</span></span></code></pre></div>
 <p>Now it is quite easy to merge genes from offspring terms. Just note as the final step, empty GO gene sets should be removed.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gs2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">bp_terms</span>, <span class="kw">function</span><span class="op">(</span><span class="va">nm</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">go_id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nm</span>, <span class="va">GOBPOFFSPRING</span><span class="op">[[</span><span class="va">nm</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># self + offspring</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">gs</span><span class="op">[</span><span class="va">go_id</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">go_id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nm</span>, <span class="va">GOBPOFFSPRING</span><span class="op">[[</span><span class="va">nm</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># self + offspring</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">gs</span><span class="op">[</span><span class="va">go_id</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gs2</span><span class="op">)</span> <span class="op">=</span> <span class="va">bp_terms</span></span>
 <span><span class="va">gs2</span> <span class="op">=</span> <span class="va">gs2</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">gs2</span>, <span class="va">length</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span></code></pre></div>
@@ -202,7 +216,7 @@
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.2.0 (2022-04-22)</span></span>
 <span><span class="co">## Platform: x86_64-apple-darwin17.0 (64-bit)</span></span>
@@ -220,34 +234,35 @@
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] GO.db_3.15.0         AnnotationDbi_1.58.0 IRanges_2.30.0      </span></span>
-<span><span class="co">## [4] S4Vectors_0.34.0     Biobase_2.56.0       BiocGenerics_0.42.0 </span></span>
-<span><span class="co">## [7] biomaRt_2.52.0       knitr_1.39          </span></span>
+<span><span class="co">## [1] GO.db_3.16.0         AnnotationDbi_1.60.0 IRanges_2.32.0      </span></span>
+<span><span class="co">## [4] S4Vectors_0.36.1     Biobase_2.58.0       BiocGenerics_0.44.0 </span></span>
+<span><span class="co">## [7] biomaRt_2.54.0       knitr_1.42          </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] Rcpp_1.0.9             prettyunits_1.1.1      png_0.1-7             </span></span>
-<span><span class="co">##  [4] Biostrings_2.64.0      assertthat_0.2.1       rprojroot_2.0.3       </span></span>
-<span><span class="co">##  [7] digest_0.6.29          utf8_1.2.2             BiocFileCache_2.4.0   </span></span>
-<span><span class="co">## [10] R6_2.5.1               GenomeInfoDb_1.32.2    RSQLite_2.2.15        </span></span>
-<span><span class="co">## [13] evaluate_0.15          httr_1.4.3             pillar_1.8.0          </span></span>
-<span><span class="co">## [16] zlibbioc_1.42.0        rlang_1.0.4            progress_1.2.2        </span></span>
-<span><span class="co">## [19] curl_4.3.2             jquerylib_0.1.4        blob_1.2.3            </span></span>
-<span><span class="co">## [22] rmarkdown_2.14         pkgdown_2.0.6          textshaping_0.3.6     </span></span>
-<span><span class="co">## [25] desc_1.4.1             stringr_1.4.0          RCurl_1.98-1.8        </span></span>
-<span><span class="co">## [28] bit_4.0.4              compiler_4.2.0         xfun_0.31             </span></span>
-<span><span class="co">## [31] pkgconfig_2.0.3        systemfonts_1.0.4      htmltools_0.5.3       </span></span>
-<span><span class="co">## [34] tidyselect_1.1.2       KEGGREST_1.36.3        tibble_3.1.8          </span></span>
-<span><span class="co">## [37] GenomeInfoDbData_1.2.8 XML_3.99-0.10          fansi_1.0.3           </span></span>
-<span><span class="co">## [40] crayon_1.5.1           dplyr_1.0.9            dbplyr_2.2.1          </span></span>
-<span><span class="co">## [43] rappdirs_0.3.3         bitops_1.0-7           jsonlite_1.8.0        </span></span>
-<span><span class="co">## [46] lifecycle_1.0.1        DBI_1.1.3              magrittr_2.0.3        </span></span>
-<span><span class="co">## [49] cli_3.3.0              stringi_1.7.8          cachem_1.0.6          </span></span>
-<span><span class="co">## [52] XVector_0.36.0         fs_1.5.2               xml2_1.3.3            </span></span>
-<span><span class="co">## [55] bslib_0.4.0            filelock_1.0.2         ellipsis_0.3.2        </span></span>
-<span><span class="co">## [58] ragg_1.2.2             vctrs_0.4.1            generics_0.1.3        </span></span>
-<span><span class="co">## [61] tools_4.2.0            bit64_4.0.5            glue_1.6.2            </span></span>
-<span><span class="co">## [64] purrr_0.3.4            hms_1.1.1              fastmap_1.1.0         </span></span>
-<span><span class="co">## [67] yaml_2.3.5             memoise_2.0.1          sass_0.4.2</span></span></code></pre>
+<span><span class="co">##  [1] Rcpp_1.0.10            prettyunits_1.1.1      png_0.1-8             </span></span>
+<span><span class="co">##  [4] Biostrings_2.66.0      assertthat_0.2.1       rprojroot_2.0.3       </span></span>
+<span><span class="co">##  [7] digest_0.6.31          utf8_1.2.3             BiocFileCache_2.6.0   </span></span>
+<span><span class="co">## [10] R6_2.5.1               GenomeInfoDb_1.34.9    RSQLite_2.2.20        </span></span>
+<span><span class="co">## [13] evaluate_0.20          httr_1.4.4             pillar_1.8.1          </span></span>
+<span><span class="co">## [16] zlibbioc_1.44.0        rlang_1.0.6            progress_1.2.2        </span></span>
+<span><span class="co">## [19] curl_5.0.0             jquerylib_0.1.4        blob_1.2.3            </span></span>
+<span><span class="co">## [22] rmarkdown_2.20         pkgdown_2.0.7          textshaping_0.3.6     </span></span>
+<span><span class="co">## [25] desc_1.4.2             stringr_1.5.0          RCurl_1.98-1.10       </span></span>
+<span><span class="co">## [28] bit_4.0.5              compiler_4.2.0         xfun_0.37             </span></span>
+<span><span class="co">## [31] pkgconfig_2.0.3        systemfonts_1.0.4      htmltools_0.5.4       </span></span>
+<span><span class="co">## [34] tidyselect_1.2.0       KEGGREST_1.38.0        tibble_3.1.8          </span></span>
+<span><span class="co">## [37] GenomeInfoDbData_1.2.9 XML_3.99-0.13          fansi_1.0.4           </span></span>
+<span><span class="co">## [40] withr_2.5.0            crayon_1.5.2           dplyr_1.1.0           </span></span>
+<span><span class="co">## [43] dbplyr_2.3.0           rappdirs_0.3.3         bitops_1.0-7          </span></span>
+<span><span class="co">## [46] jsonlite_1.8.4         lifecycle_1.0.3        DBI_1.1.3             </span></span>
+<span><span class="co">## [49] magrittr_2.0.3         cli_3.6.0              stringi_1.7.12        </span></span>
+<span><span class="co">## [52] cachem_1.0.6           XVector_0.38.0         fs_1.6.1              </span></span>
+<span><span class="co">## [55] xml2_1.3.3             bslib_0.4.2            filelock_1.0.2        </span></span>
+<span><span class="co">## [58] ellipsis_0.3.2         ragg_1.2.5             vctrs_0.5.2           </span></span>
+<span><span class="co">## [61] generics_0.1.3         tools_4.2.0            bit64_4.0.5           </span></span>
+<span><span class="co">## [64] glue_1.6.2             purrr_1.0.1            hms_1.1.2             </span></span>
+<span><span class="co">## [67] fastmap_1.1.0          yaml_2.3.7             memoise_2.0.1         </span></span>
+<span><span class="co">## [70] sass_0.4.5</span></span></code></pre>
 </div>
   </div>
 
@@ -268,7 +283,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

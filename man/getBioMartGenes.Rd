@@ -11,7 +11,7 @@ getBioMartGenes(dataset, add_chr_prefix = FALSE)
 }
 \arguments{
 
-  \item{dataset}{A BioMart dataset. For a proper value, please see \code{\link{supportedOrganisms}}.}
+  \item{dataset}{A BioMart dataset or a taxon ID. For a proper value, please see \code{\link{supportedOrganisms}}.}
   \item{add_chr_prefix}{Whether to add "chr" prefix to chromosome names? If it is ture, it uses \code{GenomeInfoDb::seqlevelsStyle(gr) = "UCSC"} to add the prefix.}
 
 }

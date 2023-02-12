@@ -1,10 +1,14 @@
 S3method("print", "BioMartGOGeneSets_info")
 export("print.BioMartGOGeneSets_info")
 export("BioMartGOGeneSets")
+export("changeSeqnameStyle")
 export("getBioMartGOGeneSets")
 export("getBioMartGenes")
+export("getBioMartGenomeInfo")
 export("supportedOrganisms")
 
+import("GenomicRanges")
 importFrom("S4Vectors", "mcols")
 importFrom("utils", "browseURL", "download.file")
+importFrom("utils", "read.table")
 
