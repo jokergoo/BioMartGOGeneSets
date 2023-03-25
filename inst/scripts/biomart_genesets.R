@@ -130,15 +130,15 @@ setwd("~/project/development/BioMartGOGeneSets_data")
 #### download data from BioMart in the original format   ##########
 
 library(biomaRt)
-ensembl = useEnsembl(biomart = "genes", mirror = "www")
+ensembl = useEnsembl(biomart = "genes", mirror = "useast")
 # attributes = listAttributes(ensembl)
-get_datasets(ensembl, "genes_mart", overwrite = TRUE)
+get_datasets(ensembl, "genes_mart", overwrite = FALSE)
 
 listEnsemblGenomes()
 
 for(mart in c("protists_mart", "fungi_mart", "metazoa_mart", "plants_mart")) {
 	ensembl = useEnsemblGenomes(biomart = mart)
-	get_datasets(ensembl, mart, overwrite = TRUE)
+	get_datasets(ensembl, mart, overwrite = FALSE)
 }
 
 ####################################
@@ -238,6 +238,7 @@ parallel::mclapply(all_files, function(f) {
 
 tbl = NULL
 for(file in list.files(pattern = "datasets.*.csv")) {
+	cat(file, "\n")
 	tb0 = read.csv(file)
 	tb0$mart = gsub("^datasets_(.*)\\.csv$", "\\1", file)
 	tb0$n_gene = 0
@@ -267,43 +268,10 @@ rownames(tb) = tb[, 1]
 
 saveRDS(tb, file = "all_supported_organisms.rds", compress = "xz")
 
-d = NULL
-for(i in seq_len(nrow(tb2))) {
-	d[i] = stringdist(gsub("( genes )?\\(.*\\)", "", tb2$description[i]), gsub("\\(.*\\)", "", tb2$name[i]))
-}
 
-# manually check
-tb["aastaci_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["aastaci_eg_gene", "description"])
-tb["aastaci_eg_gene", "taxon_id"] = "112090"
-tb["aastaci_eg_gene", "genbank_accession"] = "GCA_000520075.1"
+#====================
 
-tb["ainvadans_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["ainvadans_eg_gene", "description"])
-tb["ainvadans_eg_gene", "taxon_id"] = "157072"
-tb["ainvadans_eg_gene", "genbank_accession"] = "GCA_000520115.1"
-
-tb["gultimum_eg_gene", "name"] = gsub("( genes )?\\(.*\\)", "", tb["gultimum_eg_gene", "description"])
-tb["gultimum_eg_gene", "taxon_id"] = "431595"
-tb["gultimum_eg_gene", "genbank_accession"] = "GCA_000143045.1"
-
-
-# tb["pgraminisug99_eg_gene", "genbank_accession"] = "GCA_000149925.1"
-# tb["choffmanni_gene_ensembl", "genbank_accession"] = "GCA_000164785.2"
-# tb["csavignyi_gene_ensembl", "genbank_accession"] = "GCA_000149265.1"
-# tb["eeuropaeus_gene_ensembl", "genbank_accession"] = "GCA_000296755.1"
-# tb["etelfairi_gene_ensembl", "genbank_accession"] = 
-# tb["gaculeatus_gene_ensembl", "genbank_accession"] = 
-# tb["oprinceps_gene_ensembl", "genbank_accession"] = 
-# tb["pcapensis_gene_ensembl", "genbank_accession"] = 
-# tb["pmarinus_gene_ensembl", "genbank_accession"] = 
-# tb["pvampyrus_gene_ensembl", "genbank_accession"] = 
-# tb["saraneus_gene_ensembl", "genbank_accession"] = 
-# tb["tbelangeri_gene_ensembl", "genbank_accession"] = 
-# tb["tnigroviridis_gene_ensembl", "genbank_accession"] = 
-# tb["ttruncatus_gene_ensembl", "genbank_accession"] = "GCA_001922835.1"
-# tb["vpacos_gene_ensembl", "genbank_accession"] = 
-# tb["csonorensis_eg_gene", "genbank_accession"] = 
-# tb["lsalmonis_eg_gene", "genbank_accession"] = 
-# tb["alaibachii_eg_gene", "genbank_accession"] = 
+tb[which(!grepl("^G", tb$genbank_accession)), ]
 
 ## add ncbi genome link
 library(rvest)
@@ -311,20 +279,22 @@ tb$ncbi_genome_link = NA
 for(i in seq_len(nrow(tb))) {
 	cat(i, "/", nrow(tb), "...\n")
 	base_link = "https://ftp.ncbi.nih.gov/genomes/all/GCA"
-	code1 = substr(tb[i, "genbank_accession"], 5, 5+2)
-	code2 = substr(tb[i, "genbank_accession"], 8, 8+2)
-	code3 = substr(tb[i, "genbank_accession"], 11, 11+2)
-	base_link = qq("@{base_link}/@{code1}/@{code2}/@{code3}/")
+	if(grepl("^G", tb[i, "genbank_accession"])) {
+		code1 = substr(tb[i, "genbank_accession"], 5, 5+2)
+		code2 = substr(tb[i, "genbank_accession"], 8, 8+2)
+		code3 = substr(tb[i, "genbank_accession"], 11, 11+2)
+		base_link = qq("@{base_link}/@{code1}/@{code2}/@{code3}/")
 
-	oe = try(html <- read_html(base_link))
-	if(!inherits(oe, "try-error")) {
-		assembly = html %>% html_elements("a") %>% html_text()
-		assembly = assembly[-c(1, length(assembly))]
-		assembly = gsub("/$", "", assembly)
-		assembly = assembly[ grepl(tb[i, "genbank_accession"], assembly) ]
-		if(length(assembly)) {
-			link = qq("@{base_link}/@{assembly}/@{assembly}_assembly_report.txt")
-			tb$ncbi_genome_link[i] = link
+		oe = try(html <- read_html(base_link))
+		if(!inherits(oe, "try-error")) {
+			assembly = html %>% html_elements("a") %>% html_text()
+			assembly = assembly[-c(1, length(assembly))]
+			assembly = gsub("/$", "", assembly)
+			assembly = assembly[ grepl(tb[i, "genbank_accession"], assembly) ]
+			if(length(assembly)) {
+				link = qq("@{base_link}/@{assembly}/@{assembly}_assembly_report.txt")
+				tb$ncbi_genome_link[i] = link
+			}
 		}
 	}
 }
