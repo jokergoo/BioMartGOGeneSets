@@ -1,0 +1,20 @@
+---
+title: "Versions"
+author: "Zuguang Gu (z.gu@dkfz.de)"
+date: '`r Sys.Date()`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Versions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Data retrieved on 2023-09-23.
+
+- Ensembl release 110 - July 2023
+- Ensembl Fungi release 57 - July 2023
+- Ensembl Metazoa release 57 - July 2023
+- Ensembl Plants release 57 - July 2023
+- Ensembl Protists release 57 - July 2023
+
+- GO.db_3.18.0

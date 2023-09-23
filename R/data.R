@@ -12,10 +12,10 @@
 # == example
 # BioMartGOGeneSets
 BioMartGOGeneSets = list(
-	built_date = "2023-03-25",
+	built_date = "2023-09-23",
 	source = "https://www.ensembl.org/info/data/biomart/index.html",
-	biomaRt_version = "2.54.0",
-	GO.db_version = "3.17.0"
+	biomaRt_version = "2.54.1",
+	GO.db_version = "3.18.0"
 )
 class(BioMartGOGeneSets) = "BioMartGOGeneSets_info"
 

@@ -42,7 +42,7 @@ get_datasets = function(ensembl, label = "", overwrite = TRUE) {
 	for(da in datasets[, 1]) {
 		qqcat("@{da}\n")
 
-		if(da %in% c("elucius_gene_ensembl")) {
+		if(da %in% c("elucius_gene_ensembl", "smaximus_gene_ensembl")) {
 			removed_da = c(removed_da, da)
 			next
 		}
@@ -300,4 +300,5 @@ for(i in seq_len(nrow(tb))) {
 }
 
 saveRDS(tb, file = "all_supported_organisms.rds", compress = "xz")
+saveRDS(tb, file = "../BioMartGOGeneSets/inst/extdata/all_supported_organisms.rds", compress = "xz")
 
